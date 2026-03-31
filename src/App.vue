@@ -10,7 +10,7 @@
 
     <!-- 中文注释：我们的通用虚拟列表组件 -->
     <div v-else class="list-wrapper">
-      <VirtualList
+      <PerfectVirtualScroll
         :data="messages"
         keyField="id"
         :measureItem="measureMessage"
@@ -21,14 +21,14 @@
           <div class="message-header">消息序号 #{{ item.id }}</div>
           <div class="message-body" v-text="item.text"></div>
         </div>
-      </VirtualList>
+      </PerfectVirtualScroll>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import VirtualList from './components/VirtualList.vue';
+import PerfectVirtualScroll from './components/PerfectVirtualScroll.vue';
 import { prepare, layout } from '@chenglou/pretext';
 
 // 数据实体限定

@@ -1,6 +1,6 @@
-# 🚀 完美形态：Vue3 + Pretext 超高性能虚拟列表
+# 🚀 PerfectVirtualScroll：极速无感虚拟列表
 
-基于最近非常火热的高性能文字排版无 DOM 测量库 [@chenglou/pretext](https://github.com/chenglou/pretext) 打造出的一款 **完美的长列表虚拟滚动通用组件**。
+基于最近非常火热的高性能文字排版无 DOM 测量库 [@chenglou/pretext](https://github.com/chenglou/pretext) 打造出的一款 **完美且极致流畅的长列表虚拟滚动通用组件**。
 
 此项目立足于解决以往所有动态高度虚拟列表（依赖于给一个“预估高度”，并在渲染真 DOM 后重新进行 `getBoundingClientRect()` 测算的方案）引发的灾难级性能回流、滚动条抖屏、底部重绘导致视窗回跳等核心痛点。
 
@@ -24,31 +24,31 @@ npm install
 # 2. 启动本地测试环境
 npm run dev
 
-# 3. 生产环境构建
+# 3. 生产环境构建 NPM Component Library
 npm run build
 ```
 
-## 💡 如何使用 `VirtualList` 通用组件？
+## 💡 如何使用 `PerfectVirtualScroll` 通用组件？
 
-本项目已将核心虚拟滚动逻辑抽离封装至 `src/components/VirtualList.vue` 中，你只需要像如下这般引入并定义对应的计算函数即可使用。
+本项目已将核心虚拟滚动逻辑抽离封装至 `src/components/PerfectVirtualScroll.vue` 中，你只需要像如下这般引入并定义对应的计算函数即可使用。
 
 ### 1. 基础调用与 Props 规范
 
 ```vue
 <template>
-  <VirtualList
+  <PerfectVirtualScroll
     :data="messages"
     keyField="id"
     :measureItem="measureMessage"
     :buffer="10"
-    v-slot="{ item, index }"
+    v-slot="{ item }"
   >
     <!-- 这里放置你完全自定义的卡片或DOM结构 -->
     <div class="message-card">
       <div class="header">序号 #{{ item.id }}</div>
       <div class="body" v-text="item.text"></div>
     </div>
-  </VirtualList>
+  </PerfectVirtualScroll>
 </template>
 ```
 
@@ -96,26 +96,25 @@ const measureMessage = (item, containerWidth) => {
 ### 方案 A：源码级引入（最轻量且灵活・强烈推荐）
 由于本组件以追求极简为目标开发（单文件无额外冗余状态），在企业级应用中，最有效率的方案即拷贝。
 
-1. **直接复制**：复制 `src/components/VirtualList.vue` 到新项目的组件目录下。
+1. **直接复制**：复制 `src/components/PerfectVirtualScroll.vue` 到新项目的组件目录下。
 2. **安装测绘依赖**：在你的新项目中安装 `pretext` 核心算法库：
    ```bash
    npm install @chenglou/pretext
    ```
 3. 在新项目中参照本仓库中 `App.vue` 传递测绘函数的方法引入即可！
 
-### 方案 B：作为私有库管理 (Monorepo 或 npm 链接)
-如果您打算将此项目拓展为全公司的底层基建组件：
+### 方案 B：作为 NPM 库管理
+本库已遵循 NPM 分发标准打包策略进行构建，你可以直接引用打包产物：
 
-1. **利用 Vite 库模式打包**：在 `vite.config.ts` 中可以轻松追加 `build.lib` 选项将其编译为通用组件库产物。
-2. **目录链接/发布**：在新项目中修改 `package.json` 直接指派到此路径：
+1. **利用包管理器依赖**：在新项目中修改 `package.json` 直接指派到此路径关联：
    ```json
    {
      "dependencies": {
-       "final-virtual-scroll": "file:../相对路径/finalVirtualScroll"
+       "perfect-virtual-scroll": "file:../相对路径/finalVirtualScroll"
      }
    }
    ```
-3. 运行 `npm install` 后，即可像使用第三方 UI 库相同的方式 `import VirtualList from 'final-virtual-scroll'` 进行消费。
+2. 运行 `npm install` 后，即可像使用第三方 UI 库相同的方式 `import { PerfectVirtualScroll } from 'perfect-virtual-scroll'` 进行消费。
 
 ---
 *Developed with the principle of minimal mutations, elegant code structures, and ultimate web performance!*

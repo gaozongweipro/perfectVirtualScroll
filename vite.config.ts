@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [
     vue(),
     dts({
-      include: ['src/components/VirtualList.vue', 'src/index.ts'],
+      include: ['src/components/PerfectVirtualScroll.vue', 'src/index.ts'],
       outDir: 'dist',
       insertTypesEntry: true,
       compilerOptions: {
@@ -19,8 +19,8 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
-      name: 'FinalVirtualScroll',
-      fileName: 'final-virtual-scroll'
+      name: 'PerfectVirtualScroll',
+      fileName: 'perfect-virtual-scroll'
     },
     rollupOptions: {
       // 确保应用中不会打包 vue，而是将其作为外部依赖

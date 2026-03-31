@@ -1,18 +1,18 @@
 {
-  "name": "final-virtual-scroll",
+  "name": "perfect-virtual-scroll",
   "version": "1.0.0",
   "type": "module",
   "files": [
     "dist"
   ],
-  "main": "./dist/final-virtual-scroll.umd.cjs",
-  "module": "./dist/final-virtual-scroll.js",
+  "main": "./dist/perfect-virtual-scroll.umd.cjs",
+  "module": "./dist/perfect-virtual-scroll.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/final-virtual-scroll.js",
-      "require": "./dist/final-virtual-scroll.umd.cjs"
+      "import": "./dist/perfect-virtual-scroll.js",
+      "require": "./dist/perfect-virtual-scroll.umd.cjs"
     }
   },
   "scripts": {

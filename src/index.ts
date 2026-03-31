@@ -1,4 +1,4 @@
-import VirtualList from './components/VirtualList.vue';
+import PerfectVirtualScroll from './components/PerfectVirtualScroll.vue';
 
-export { VirtualList };
-export default VirtualList;
+export { PerfectVirtualScroll };
+export default PerfectVirtualScroll;
