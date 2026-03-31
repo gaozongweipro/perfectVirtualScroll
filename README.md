@@ -20,19 +20,19 @@
 由于本库以 NPM 标准库形式发布，您可以在任何 Vue 3 项目中轻松快捷地集成：
 
 ### 1. 安装核心依赖包
-通过 npm、yarn 或 pnpm 安装本组件库以及核心前置测绘算法库：
+通过 npm、yarn 或 pnpm 直接安装本组件库：
 
 ```bash
-npm install perfect-virtual-scroll @chenglou/pretext
+npm install perfect-virtual-scroll
 ```
 
-*(说明：`@chenglou/pretext` 是核心计算引擎包，用于纯数学级别的文字预检与排版长宽计算，为虚拟列表提供不可或缺的高效测数基石。)*
+*(说明：在 `v1.0.0` 版本后，我们已将底层的高频数学运算引擎直接暴漏为内置再导出模块。npm 或是 pnpm 会自动帮您安装依赖，您无需再手动进行任何额外的前置库安装了！)*
 
 ### 2. 页面中引入并注册
 在使用该虚拟滚动的业务组件页中（或作为全局组件）进行导入：
 
 ```ts
-import { PerfectVirtualScroll } from 'perfect-virtual-scroll';
+import { PerfectVirtualScroll, prepare, layout } from 'perfect-virtual-scroll';
 // 如果有独立样式的需要，请通过这种方式引入预编译的 css（大部分纯净组件不需要）
 // import 'perfect-virtual-scroll/dist/style.css'; 
 ```
@@ -66,8 +66,7 @@ import { PerfectVirtualScroll } from 'perfect-virtual-scroll';
 </template>
 
 <script setup lang="ts">
-import { PerfectVirtualScroll } from 'perfect-virtual-scroll';
-import { prepare, layout } from '@chenglou/pretext';
+import { PerfectVirtualScroll, prepare, layout } from 'perfect-virtual-scroll';
 
 // ----------------------------------------------------
 // 1. 常量测绘准备

@@ -28,8 +28,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import PerfectVirtualScroll from './components/PerfectVirtualScroll.vue';
-import { prepare, layout } from '@chenglou/pretext';
+import { PerfectVirtualScroll, prepare, layout } from '../src/index';
 
 // 数据实体限定
 interface Message {
