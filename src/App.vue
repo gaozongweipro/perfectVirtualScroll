@@ -55,38 +55,58 @@ const LINE_HEIGHT = 20;
  */
 const ITEM_PADDING_Y = 45; 
 
-// 生成随机大数据
+// 我们增加一个缓存池。很多极度相似或重复的话只需 prepare 一次！非常节约内存和算力
+const preparedCache = new Map();
+
+// 生成随机大数据：为了保证主线程不被 5 万次循环阻塞 (长任务 Long Task)
+// 这里我们引入了前端极致性能优化的两大手段：时间分片 (Time Slicing) + 缓存。
 onMounted(() => {
-  // 为了不阻塞页面初始渲染，我们将其延迟执行
-  setTimeout(() => {
-    const data: Message[] = [];
-    const baseTexts = [
-      "简短的对话。",
-      "这是一句长一点的消息，可以覆盖多半行的空间区域测试。",
-      "现在是一段由于超过容器宽度而肯定会折行的句子。传统虚拟列表在面对这种文本时，如果采用推算预估的方式，极容易产生回弹、底部跳屏等抖动问题！而借助于 Pretext 无与伦比的数学排版计算预获取策略，DOM没有参与任何测量流程。",
-      "性能测试2：不接触 DOM 进行排版的魅力！",
-      "更长的文本：如果你面对十万级的长短信聊天框，每一次重调整或屏幕翻转都会使得全部视图被毁。使用 Pretext 后所有的字形边界与路由将提前计算完毕，再交给我们的 VirtualList 来完成渲染工作。这代表了现今前端最科学、最低开销的文本测量架构之一！"
-    ];
-    
-    for(let i = 0; i < 50000; i++) {
-        let content = baseTexts[Math.floor(Math.random() * baseTexts.length)];
-        // 刻意制造超长文本
-        if (i % 7 === 0) content = content + " " + content;
-        if (i % 20 === 0) content = content + " " + content + " " + content;
-        
-        // 关键调用：文字测算的准备工作。
-        // （在此处预热，实际上也可选择在 VirtualList 每次算高函数内进行按需懒计算后缓存）
-        const preparedText = prepare(content, FONT);
-        
-        data.push({
-          id: i,
-          text: content,
-          preparedText
-        });
+  const data: Message[] = [];
+  const baseTexts = [
+    "简短的对话。",
+    "这是一句长一点的消息，可以覆盖多半行的空间区域测试。",
+    "现在是一段由于超过容器宽度而肯定会折行的句子。传统虚拟列表在面对这种文本时，极容易产生回弹、底部跳屏等抖动问题！",
+    "性能测试2：不接触 DOM 进行排版的魅力！",
+    "更长的文本：如果你面对十万级的长短信聊天框，每一次重调整或屏幕翻转都会使得全部视图被毁。使用 Pretext 后计算会非常优雅。"
+  ];
+  
+  const TOTAL_COUNT = 50000;
+  const CHUNK_SIZE = 1000; // 每帧处理 1000 条，把主线程及时归还给浏览器渲染 UI
+  let currentIndex = 0;
+
+  const processChunk = () => {
+    const end = Math.min(currentIndex + CHUNK_SIZE, TOTAL_COUNT);
+    for (let i = currentIndex; i < end; i++) {
+      let content = baseTexts[Math.floor(Math.random() * baseTexts.length)];
+      if (i % 7 === 0) content += " " + content;
+      if (i % 20 === 0) content += " " + content + " " + content;
+
+      // 前端渲染高阶技巧：针对同样的大段字符串进行复用，免去多余 Canvas 开销
+      let preparedText = preparedCache.get(content);
+      if (!preparedText) {
+        preparedText = prepare(content, FONT);
+        preparedCache.set(content, preparedText);
+      }
+      
+      data.push({
+        id: i,
+        text: content,
+        preparedText
+      });
     }
-    messages.value = data;
-    loading.value = false;
-  }, 100);
+    currentIndex = end;
+
+    if (currentIndex < TOTAL_COUNT) {
+      // 关键：把下一个大算力块扔到下一帧，保证 Loading 动画或滚动条有喘息和绘制的机会
+      requestAnimationFrame(processChunk);
+    } else {
+      messages.value = data;
+      loading.value = false;
+    }
+  };
+
+  // 启动分片任务
+  requestAnimationFrame(processChunk);
 });
 
 // 计算项高度函数
